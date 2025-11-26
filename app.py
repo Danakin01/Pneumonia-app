@@ -1,4 +1,3 @@
-# app.py — PneumoniaGuard AI v5.0 — CLEAN & PROFESSIONAL (2025)
 import streamlit as st
 import torch
 import torch.nn as nn
@@ -15,7 +14,7 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 
 # MUST BE FIRST
-st.set_page_config(page_title="PneumoniaGuard AI v5.0", page_icon="Lungs", layout="wide")
+st.set_page_config(page_title="PneumoniaDetection", page_icon="Lungs", layout="wide")
 
 # ========================================
 # 1. PNEUMONIA MODEL (EfficientNet-B0)
@@ -88,7 +87,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="title">PneumoniaGuard AI v5.0</div>', True)
+st.markdown('<div class="title">PneumoniaDetection</div>', True)
 st.markdown("<div style='text-align:center; color:#94a3b8; font-size:1.7rem;'>Hospital-Grade • Explainable • Beautiful</div>", True)
 
 tab1, tab2, tab3 = st.tabs(["Live Diagnosis", "Image Quality Report", "About & Metrics"])
@@ -160,7 +159,7 @@ with tab1:
             doc = SimpleDocTemplate(buffer, pagesize=letter)
             styles = getSampleStyleSheet()
             story = [
-                Paragraph("PneumoniaGuard AI v5.0 Report", styles["Title"]),
+                Paragraph("PneumoniaDetection Report", styles["Title"]),
                 Paragraph(f"Patient: {name} | Age: {age} | ID: {pid}", styles["Normal"]),
                 Paragraph(f"View: {view} | Quality: {'Poor' if issues else 'Good'}", styles["Normal"]),
                 Paragraph(f"Result: <b>{result}</b> • Confidence: {confidence:.1%}", styles["Normal"]),
@@ -183,7 +182,7 @@ with tab2:
         st.info("Upload an image in the Live Diagnosis tab to see quality metrics.")
 
 with tab3:
-    st.markdown("### PneumoniaGuard AI v5.0")
+    st.markdown("### PneumoniaDetection")
     st.success("Clean • Fast • Professional • No False Rejections")
     st.metric("Model Accuracy", "96.8%")
     st.metric("Validation", "Real-world tested")
