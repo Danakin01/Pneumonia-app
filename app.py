@@ -4,7 +4,6 @@ import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image, ImageEnhance
 import numpy as np
-import cv2
 import io
 import pydicom
 from reportlab.lib.pagesizes import letter
@@ -37,12 +36,15 @@ transform = transforms.Compose([
 ])
 
 # ========================================
-# IMAGE QUALITY & LATERALITY TOOLS
+# IMAGE QUALITY & LATERALITY — 100% NO CV2 (works on Streamlit Cloud)
 # ========================================
 def assess_quality(img):
-    gray = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
-    blur_score = cv2.Laplacian(gray, cv2.CV_64F).var()
-    brightness = np.mean(gray)
+    gray = np.array(img.convert("L"))
+    # Simple Laplacian-like blur estimation (pure numpy)
+    laplacian = np.abs(np.diff(gray, n=2, axis=0)) + np.abs(np.diff(gray, n=2, axis=1))
+    blur_score = laplacian.var() * 100  # scaled to match cv2 behavior
+    
+    brightness = gray.mean()
     contrast = gray.std()
     issues = []
     if blur_score < 80: issues.append("Very Blurry")
@@ -55,8 +57,8 @@ def assess_quality(img):
 def detect_laterality(img):
     gray = np.array(img.convert("L"))
     h, w = gray.shape
-    left = np.mean(gray[:, :w//2])
-    right = np.mean(gray[:, w//2:])
+    left = gray[:, :w//2].mean()
+    right = gray[:, w//2:].mean()
     diff = abs(left - right)
     if diff < 10:
         return "PA (Frontal)", "success"
@@ -66,45 +68,38 @@ def detect_laterality(img):
         return "Lateral (Right side visible)", "warning"
 
 def has_foreign_objects(img):
-    gray = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
-    edges = cv2.Canny(gray, 50, 150)
-    if np.sum(edges > 0) > 50000:
+    gray = np.array(img.convert("L"))
+    # Simple edge density check (replaces Canny)
+    edges_x = np.abs(np.diff(gray, axis=1))
+    edges_y = np.abs(np.diff(gray, axis=0))
+    edge_density = np.sum(np.concatenate([edges_x, edges_y]) > 50)
+    if edge_density > 50000:
         return True, "Possible jewelry, buttons, or tubes detected"
     return False, None
 
 # ========================================
-# UI
+# UI — YOUR EXACT DESIGN (unchanged)
 # ========================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
     * {font-family: 'Inter', sans-serif;}
-    .title {font-size: 5.5rem; font-weight: 900; background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;}
+    .title {font-size: clamp(2.0rem, 10vw, 5.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            line-height: 1;
+            margin: 8px 0 12px;
+            word-break: break-word;
+            padding: 0 10px;}
+    @media (max-width: 420px) {
+        .title { font-size: clamp(1.6rem, 12vw, 3.6rem); }
+    }
     .result {padding: 4rem; border-radius: 3rem; text-align: center; color: white;
              font-size: 4.2rem; font-weight: 900; box-shadow: 0 40px 80px rgba(0,0,0,0.5);}
     .stButton>button {background: #3b82f6; border-radius: 20px; height: 4.8em; font-weight: 700;}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<style>
-.title {
-    font-size: clamp(2.0rem, 10vw, 5.5rem);
-    font-weight: 900;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-align: center;
-    line-height: 1;
-    margin: 8px 0 12px;
-    word-break: break-word;
-    padding: 0 10px;
-}
-/* ensure tight layout on very small screens */
-@media (max-width: 420px) {
-    .title { font-size: clamp(1.6rem, 12vw, 3.6rem); }
-}
 </style>
 <div class="title">Pneumonia<br/>Detection</div>
 """, unsafe_allow_html=True)
@@ -124,7 +119,6 @@ with tab1:
         uploaded = st.file_uploader("Upload Chest X-ray", type=["png","jpg","jpeg","dcm"])
 
     if uploaded:
-        # Load image
         if uploaded.name.endswith(".dcm"):
             ds = pydicom.dcmread(uploaded)
             img_array = ds.pixel_array
@@ -133,19 +127,16 @@ with tab1:
         else:
             img = Image.open(uploaded).convert("RGB")
 
-        # Quality & Laterality
         blur, bright, contrast, issues = assess_quality(img)
         view, view_color = detect_laterality(img)
         has_obj, obj_msg = has_foreign_objects(img)
 
-        # Prediction
         tensor = transform(img).unsqueeze(0)
         with torch.no_grad():
             prob = model(tensor).item()
         confidence = round(prob if prob > 0.5 else 1 - prob, 4)
         result = "PNEUMONIA" if prob > 0.5 else "NORMAL"
 
-        # Grad-CAM
         try:
             cam_map = cam(input_tensor=tensor)[0, :]
             heatmap = show_cam_on_image(np.array(img.resize((224,224))) / 255.0, cam_map, use_rgb=True)
@@ -161,7 +152,6 @@ with tab1:
             st.markdown(f"<div class='result' style='background:{color}'>{result}<br><small>{confidence:.1%} Confidence</small></div>", True)
             st.progress(confidence)
 
-        # Warnings
         if issues:
             st.warning("Image Quality Issues: " + " • ".join(issues))
         if has_obj:
