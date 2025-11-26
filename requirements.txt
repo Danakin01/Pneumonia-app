@@ -1,8 +1,9 @@
-streamlit
-torch
-torchvision
-pillow
-pydicom
-reportlab
-pytorch-grad-cam
-numpy
+streamlit==1.38.0
+torch==2.4.1
+torchvision==0.19.1
+--index-url https://download.pytorch.org/whl/cpu
+pillow==10.4.0
+pydicom==3.0.1
+reportlab==4.2.5
+pytorch-grad-cam==1.4.8
+numpy==2.1.2
