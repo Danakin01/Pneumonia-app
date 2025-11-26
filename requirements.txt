@@ -4,6 +4,6 @@ pydicom==3.0.1
 reportlab==4.2.5
 numpy
 pandas==2.2.3
-pytorch-grad-cam==1.4.8
+pytorch-grad-cam
 torch==2.4.1
 torchvision==0.19.1
