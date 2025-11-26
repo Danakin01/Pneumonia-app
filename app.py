@@ -96,7 +96,7 @@ with tab1:
     col1, col2 = st.columns([1, 1.2])
     with col1:
         st.markdown("#### Patient Details")
-        name = st.text_input("Name", "Dr. Sarah Chen")
+        name = st.text_input("Name", "Daniel ")
         age = st.number_input("Age", 1, 120, 45)
         pid = st.text_input("Patient ID", "PX-2025-2001")
 
