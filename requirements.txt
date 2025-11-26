@@ -1,0 +1,24 @@
+# PneumoniaGuard AI v3 — requirements.txt
+# Run: pip install -r requirements.txt
+
+streamlit==1.38.0
+torch==2.4.1
+torchvision==0.19.1
+torchaudio==2.4.1
+
+# Grad-CAM (official, works perfectly)
+grad-cam==1.5.4
+
+# Medical & Image Processing
+pillow==10.4.0
+opencv-python==4.10.0.84
+pydicom==2.4.4
+
+# PDF Reports & Charts
+reportlab
+plotly
+pandas
+
+# Optional but recommended
+numpy
+matplotlib
