@@ -1,9 +1,11 @@
-streamlit
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.4.1+cpu
 torchvision==0.19.1+cpu
---index-url https://download.pytorch.org/whl/cpu
-pillow
-pydicom
-reportlab
-pytorch-grad-cam
-numpy
+streamlit==1.38.0
+pillow==10.4.0
+pydicom==3.0.1
+reportlab==4.2.5
+pytorch-grad-cam==1.4.8
+numpy==2.1.2
+opencv-python-headless==4.10.0.84
+pandas==2.2.3
