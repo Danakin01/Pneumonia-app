@@ -2,8 +2,8 @@ streamlit==1.38.0
 pillow==10.4.0
 pydicom==3.0.1
 reportlab==4.2.5
-numpy==2.1.2
+numpy
 pandas==2.2.3
-pytorch-grad-cam==1.5.4
+pytorch-grad-cam==1.4.8
 torch==2.4.1
 torchvision==0.19.1
