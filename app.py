@@ -88,7 +88,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="title">PneumoniaDetection</div>', True)
-st.markdown("<div style='text-align:center; color:#94a3b8; font-size:1.7rem;'>Hospital-Grade • Explainable • Beautiful</div>", True)
+st.markdown("<div style='text-align:center; color:#94a3b8; font-size:1.7rem;'>Hospital-Grade • Explainable </div>", True)
 
 tab1, tab2, tab3 = st.tabs(["Live Diagnosis", "Image Quality Report", "About & Metrics"])
 
