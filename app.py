@@ -87,7 +87,27 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="title">Pneumonia<br/>Detection</div>', True)
+st.markdown("""
+<style>
+.title {
+    font-size: clamp(2.0rem, 10vw, 5.5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    line-height: 1;
+    margin: 8px 0 12px;
+    word-break: break-word;
+    padding: 0 10px;
+}
+/* ensure tight layout on very small screens */
+@media (max-width: 420px) {
+    .title { font-size: clamp(1.6rem, 12vw, 3.6rem); }
+}
+</style>
+<div class="title">Pneumonia<br/>Detection</div>
+""", unsafe_allow_html=True)
 st.markdown("<div style='text-align:center; color:#94a3b8; font-size:1.7rem;'>Hospital-Grade • Explainable </div>", True)
 
 tab1, tab2, tab3 = st.tabs(["Live Diagnosis", "Image Quality Report", "About & Metrics"])
